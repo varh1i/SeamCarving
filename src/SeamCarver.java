@@ -237,5 +237,15 @@ public class SeamCarver {
             }
             previous = i;
         }
+        int[][] seamRemovedPicture = new int[width-1][height];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (x < seam[y]) {
+                    seamRemovedPicture[x][y] = pictureArray[x][y];
+                } else if (x > seam[y]) {
+                    seamRemovedPicture[x-1][y] = pictureArray[x][y];
+                }
+            }
+        }
     }
 }
