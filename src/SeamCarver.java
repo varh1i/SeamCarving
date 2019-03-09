@@ -1,7 +1,5 @@
 import edu.princeton.cs.algs4.Picture;
 
-//import java.text.DecimalFormat;
-
 public class SeamCarver {
 
     private int[][] pictureArray;
@@ -24,7 +22,6 @@ public class SeamCarver {
         fillEnergyMatrix();
 //        printEnergyMatrix();
     }
-
 /*
     public void printEnergyMatrix() {
         System.out.println("Energy matrix: ");
@@ -34,8 +31,7 @@ public class SeamCarver {
             }
             System.out.println();
         }
-    }
-*/
+    }*/
 
     private void fillEnergyMatrix() {
         for (int y = 0; y < height(); y++) {
@@ -137,23 +133,23 @@ public class SeamCarver {
             for (int x = 0; x < width; x++) {
                 if (y == 0) {
                     distTo[x][y] = Math.sqrt(energy[x][y]);
-                    edgeTo[x][y] = getId(x,y);
-//                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
+                    edgeTo[x][y] = getId(x,y, width);
+//                    System.out.print("("+getX(edgeTo[x][y], width) +","+ df.format(distTo[x][y])+")");
                 } else {
                     double aboveDist = distTo[x][y-1] + Math.sqrt(energy[x][y]);
                     distTo[x][y] = aboveDist;
-                    edgeTo[x][y] = getId(x, y-1);
+                    edgeTo[x][y] = getId(x, y-1, width);
                     double aboveLeftDist = x > 0 ? distTo[x-1][y-1] + Math.sqrt(energy[x][y]) : Double.MAX_VALUE;
                     if (aboveLeftDist < distTo[x][y]) {
                         distTo[x][y] = aboveLeftDist;
-                        edgeTo[x][y] = getId(x-1, y-1);
+                        edgeTo[x][y] = getId(x-1, y-1, width);
                     }
                     double aboveRightDist = x < width - 2 ? distTo[x+1][y-1] + Math.sqrt(energy[x][y]) : Double.MAX_VALUE;
                     if (aboveRightDist < distTo[x][y]) {
                         distTo[x][y] = aboveRightDist;
-                        edgeTo[x][y] = getId(x+1, y-1);
+                        edgeTo[x][y] = getId(x+1, y-1, width);
                     }
-//                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
+//                    System.out.print("("+getX(edgeTo[x][y], width) +","+ df.format(distTo[x][y])+")");
                 }
 
             }
@@ -164,7 +160,7 @@ public class SeamCarver {
         for (int x = 0; x < width; x++) {
             if (distTo[x][height-1] < shortestPath) {
                 shortestPath = distTo[x][height-1];
-                shortestDestId = getId(x, height-1);
+                shortestDestId = getId(x, height-1, width);
             }
         }
 //        System.out.println("Total energy: " + shortestPath);
@@ -172,24 +168,24 @@ public class SeamCarver {
         int[] result = new int[height];
         int lastId = shortestDestId;
         for (int i = height-1; i > -1 ; i--) {
-            int x = getX(lastId);
-            int y = getY(lastId);
+            int x = getX(lastId, width);
+            int y = getY(lastId, width);
             result[i] = x;
             lastId = edgeTo[x][y];
         }
         return result;
     }
 
-    private int getId(int x, int y) {
-        return y * width() + x;
+    private int getId(int x, int y, int width) {
+        return y * width + x;
     }
 
-    private int getX(int id) {
-        return id % width();
+    private int getX(int id, int width) {
+        return id % width;
     }
 
-    private int getY(int id) {
-        return id / width();
+    private int getY(int id, int width) {
+        return id / width;
     }
 
     // remove horizontal seam from current picture
