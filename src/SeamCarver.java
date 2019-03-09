@@ -1,35 +1,35 @@
 import edu.princeton.cs.algs4.Picture;
 
+import java.text.DecimalFormat;
+
 public class SeamCarver {
 
     private int[][] pictureArray;
-    private int width;
-    private int height;
     private int[][] energy;
+    private DecimalFormat df = new DecimalFormat("#.00");
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         if (picture == null) {
             throw new IllegalArgumentException();
         }
-        this.width = picture.width();
-        this.height = picture.height();
-        this.pictureArray = new int[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        this.pictureArray = new int[picture.width()][picture.height()];
+        for (int x = 0; x < width(); x++) {
+            for (int y = 0; y < height(); y++) {
                 pictureArray[x][y] = picture.getRGB(x,y);
             }
         }
         this.energy = new int[width()][height()];
 
         fillEnergyMatrix();
-//        printEnergyMatrix();
+        printEnergyMatrix();
     }
 
-    private void printEnergyMatrix() {
+    public void printEnergyMatrix() {
+        System.out.println("Energy matrix: ");
         for (int y = 0; y < height(); y++) {
             for (int x = 0; x < width(); x++) {
-                System.out.print(energy(x,y) + "  ");
+                System.out.print(df.format(energy(x,y)) + "  ");
             }
             System.out.println();
         }
@@ -78,9 +78,9 @@ public class SeamCarver {
 
     // current picture
     public Picture picture() {
-        Picture picture = new Picture(width,height);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        Picture picture = new Picture(width(),height());
+        for (int x = 0; x < width(); x++) {
+            for (int y = 0; y < height(); y++) {
                 picture.setRGB(x,y,pictureArray[x][y]);
             }
         }
@@ -89,12 +89,12 @@ public class SeamCarver {
 
     // width of current picture
     public int width() {
-        return width;
+        return this.pictureArray.length;
     }
 
     // height of current picture
     public int height() {
-        return height;
+        return this.pictureArray[0].length;
     }
 
     // energy of pixel at column x and row y
@@ -106,7 +106,6 @@ public class SeamCarver {
     }
 
     // sequence of indices for horizontal seam
-    //TODO: transpose picture and reuse
     public int[] findHorizontalSeam() {
         return shortestPath(transpose(this.energy));
     }
@@ -127,6 +126,7 @@ public class SeamCarver {
     }
 
     private int[] shortestPath(int[][] energy) {
+        System.out.println("Shortest path");
         int width = energy.length;
         int height = energy[0].length;
         double[][] distTo = new double[width][height];
@@ -134,27 +134,28 @@ public class SeamCarver {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (y == 0) {
-                    distTo[x][y] = energy[x][y];
+                    distTo[x][y] = Math.sqrt(energy[x][y]);
                     edgeTo[x][y] = getId(x,y);
+                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
                 } else {
-                    double aboveDist = distTo[x][y-1] + energy[x][y];
+                    double aboveDist = distTo[x][y-1] + Math.sqrt(energy[x][y]);
                     distTo[x][y] = aboveDist;
                     edgeTo[x][y] = getId(x, y-1);
-                    double aboveLeftDist = x > 0 ? distTo[x-1][y-1] + energy[x][y] : Double.MAX_VALUE;
+                    double aboveLeftDist = x > 0 ? distTo[x-1][y-1] + Math.sqrt(energy[x][y]) : Double.MAX_VALUE;
                     if (aboveLeftDist < distTo[x][y]) {
                         distTo[x][y] = aboveLeftDist;
                         edgeTo[x][y] = getId(x-1, y-1);
                     }
-                    double aboveRightDist = x < width() - 2 ? distTo[x+1][y-1] + energy[x][y] : Double.MAX_VALUE;
+                    double aboveRightDist = x < width - 2 ? distTo[x+1][y-1] + Math.sqrt(energy[x][y]) : Double.MAX_VALUE;
                     if (aboveRightDist < distTo[x][y]) {
                         distTo[x][y] = aboveRightDist;
                         edgeTo[x][y] = getId(x+1, y-1);
                     }
-//                    System.out.print("("+getX(edgeTo[x][y]) +","+ df2.format(distTo[x][y])+")");
+                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
                 }
 
             }
-//            System.out.println();
+            System.out.println();
         }
         double shortestPath = Double.MAX_VALUE;
         Integer shortestDestId = null;
@@ -164,6 +165,7 @@ public class SeamCarver {
                 shortestDestId = getId(x, height-1);
             }
         }
+        System.out.println("Total energy: " + shortestPath);
 
         int[] result = new int[height];
         int lastId = shortestDestId;
@@ -205,13 +207,24 @@ public class SeamCarver {
                 throw new IllegalArgumentException();
             }
             if (previous != null) {
-                if ( i <= previous+1 || i >= previous-1) {
+                if ( i > previous+1 || i < previous-1) {
                     throw new IllegalArgumentException();
                 }
             }
             previous = i;
         }
-
+        int[][] seamRemovedPicture = new int[width()][height()-1];
+        for (int x = 0; x < width(); x++) {
+            for (int y = 0; y < height(); y++) {
+                if (y < seam[x]) {
+                    seamRemovedPicture[x][y] = pictureArray[x][y];
+                } else if (y > seam[x]) {
+                    seamRemovedPicture[x][y-1] = pictureArray[x][y];
+                }
+            }
+        }
+        pictureArray = seamRemovedPicture;
+        fillEnergyMatrix();
     }
 
     // remove vertical seam from current picture
@@ -231,15 +244,16 @@ public class SeamCarver {
                 throw new IllegalArgumentException();
             }
             if (previous != null) {
-                if ( i <= previous+1 || i >= previous-1) {
+                if ( i > previous+1 || i < previous-1) {
                     throw new IllegalArgumentException();
                 }
             }
             previous = i;
         }
-        int[][] seamRemovedPicture = new int[width-1][height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
+
+        int[][] seamRemovedPicture = new int[width()-1][height()];
+        for (int y = 0; y < height(); y++) {
+            for (int x = 0; x < width(); x++) {
                 if (x < seam[y]) {
                     seamRemovedPicture[x][y] = pictureArray[x][y];
                 } else if (x > seam[y]) {
@@ -247,5 +261,7 @@ public class SeamCarver {
                 }
             }
         }
+        pictureArray = seamRemovedPicture;
+        fillEnergyMatrix();
     }
 }
