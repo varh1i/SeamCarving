@@ -14,7 +14,7 @@ public class Main {
             seamToRemove[i] = 0;
         }
         seamCarver.removeHorizontalSeam(seamToRemove);
-        seamCarver.printEnergyMatrix();
+//        seamCarver.printEnergyMatrix();
 
         /*int[] verticalSeam = seamCarver.findVerticalSeam();
         System.out.println("Vertical");

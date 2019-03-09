@@ -1,12 +1,12 @@
 import edu.princeton.cs.algs4.Picture;
 
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 
 public class SeamCarver {
 
     private int[][] pictureArray;
     private int[][] energy;
-    private DecimalFormat df = new DecimalFormat("#.00");
+//    private DecimalFormat df = new DecimalFormat("#.00");
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
@@ -22,9 +22,10 @@ public class SeamCarver {
         this.energy = new int[width()][height()];
 
         fillEnergyMatrix();
-        printEnergyMatrix();
+//        printEnergyMatrix();
     }
 
+/*
     public void printEnergyMatrix() {
         System.out.println("Energy matrix: ");
         for (int y = 0; y < height(); y++) {
@@ -34,6 +35,7 @@ public class SeamCarver {
             System.out.println();
         }
     }
+*/
 
     private void fillEnergyMatrix() {
         for (int y = 0; y < height(); y++) {
@@ -126,7 +128,7 @@ public class SeamCarver {
     }
 
     private int[] shortestPath(int[][] energy) {
-        System.out.println("Shortest path");
+//        System.out.println("Shortest path");
         int width = energy.length;
         int height = energy[0].length;
         double[][] distTo = new double[width][height];
@@ -136,7 +138,7 @@ public class SeamCarver {
                 if (y == 0) {
                     distTo[x][y] = Math.sqrt(energy[x][y]);
                     edgeTo[x][y] = getId(x,y);
-                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
+//                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
                 } else {
                     double aboveDist = distTo[x][y-1] + Math.sqrt(energy[x][y]);
                     distTo[x][y] = aboveDist;
@@ -151,11 +153,11 @@ public class SeamCarver {
                         distTo[x][y] = aboveRightDist;
                         edgeTo[x][y] = getId(x+1, y-1);
                     }
-                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
+//                    System.out.print("("+getX(edgeTo[x][y]) +","+ df.format(distTo[x][y])+")");
                 }
 
             }
-            System.out.println();
+//            System.out.println();
         }
         double shortestPath = Double.MAX_VALUE;
         Integer shortestDestId = null;
@@ -165,7 +167,7 @@ public class SeamCarver {
                 shortestDestId = getId(x, height-1);
             }
         }
-        System.out.println("Total energy: " + shortestPath);
+//        System.out.println("Total energy: " + shortestPath);
 
         int[] result = new int[height];
         int lastId = shortestDestId;
