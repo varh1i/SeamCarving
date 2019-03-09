@@ -17,14 +17,11 @@ public class SeamCarver {
                 pictureArray[x][y] = picture.getRGB(x,y);
             }
         }
-        this.energy = new int[width()][height()];
-
         fillEnergyMatrix();
-//        printEnergyMatrix();
     }
-/*
-    public void printEnergyMatrix() {
-        System.out.println("Energy matrix: ");
+
+    /*public void printEnergyMatrix() {
+        System.out.println("\nEnergy matrix: ");
         for (int y = 0; y < height(); y++) {
             for (int x = 0; x < width(); x++) {
                 System.out.print(df.format(energy(x,y)) + "  ");
@@ -34,6 +31,7 @@ public class SeamCarver {
     }*/
 
     private void fillEnergyMatrix() {
+        this.energy = new int[width()][height()];
         for (int y = 0; y < height(); y++) {
             for (int x = 0; x < width(); x++) {
                 if (x == 0 || x == width()-1 || y == 0 || y == height()-1) {

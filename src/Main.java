@@ -7,20 +7,21 @@ public class Main {
     public static void main(String[] args) {
         Picture picture = new Picture(new File("resources/7x10.png"));
         SeamCarver seamCarver = new SeamCarver(picture);
+        /*seamCarver.printEnergyMatrix();
 
-//        System.out.println("Remove seam");
-//        int[] seamToRemove = new int[12];
-//        for (int i = 0; i < 12; i++) {
-//            seamToRemove[i] = 0;
-//        }
-//        seamCarver.removeHorizontalSeam(seamToRemove);
-//        seamCarver.printEnergyMatrix();
+        int[] seamToRemove = seamCarver.findHorizontalSeam();
+        printSeam(seamToRemove);
+        System.out.println("Remove");
+        seamCarver.removeHorizontalSeam(seamToRemove);
+        seamCarver.printEnergyMatrix();
 
-//        int[] verticalSeam = seamCarver.findVerticalSeam();
-//        System.out.println("Vertical");
-//        for (int i : verticalSeam) {
-//            System.out.println(i);
-//        }
+        seamToRemove = seamCarver.findVerticalSeam();
+        printSeam(seamToRemove);
+        System.out.println("Remove");
+        seamCarver.removeVerticalSeam(seamToRemove);
+        seamCarver.printEnergyMatrix();*/
+
+        Picture picture1 = seamCarver.picture();
 
         /*System.out.println("Horizontal");
         int[] horizontalSeam = seamCarver.findHorizontalSeam();
@@ -29,5 +30,12 @@ public class Main {
         }*/
 
 
+    }
+
+    private static void printSeam(int[] seam) {
+        for (int i : seam) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
     }
 }
